@@ -91,6 +91,7 @@ public:
 	// End Actor interface
 
 	/** Handle pressing forwards */
+	UFUNCTION()
 	void MoveForward(float Val);
 
 	/** Setup the strings used on the hud */
@@ -100,7 +101,11 @@ public:
 	void UpdatePhysicsMaterial();
 
 	/** Handle pressing right */
+	UFUNCTION()
 	void MoveRight(float Val);
+	/** Handle pressing handbrake */
+	UFUNCTION()
+	void HandBrake(bool InHandBrake);
 	/** Handle handbrake pressed */
 	void OnHandbrakePressed();
 	/** Handle handbrake released */

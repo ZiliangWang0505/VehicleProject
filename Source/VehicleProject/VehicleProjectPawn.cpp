@@ -209,6 +209,11 @@ void AVehicleProjectPawn::MoveRight(float Val)
 	GetVehicleMovementComponent()->SetSteeringInput(Val);
 }
 
+void AVehicleProjectPawn::HandBrake(bool InHandBrake)
+{
+	GetVehicleMovementComponent()->SetHandbrakeInput(InHandBrake);
+}
+
 void AVehicleProjectPawn::OnHandbrakePressed()
 {
 	GetVehicleMovementComponent()->SetHandbrakeInput(true);
