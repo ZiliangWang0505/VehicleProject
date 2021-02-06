@@ -15,9 +15,6 @@ local BP_PlayerController_C = Class()
 
 function BP_PlayerController_C:UserConstructionScript()
     self.Overridden.UserConstructionScript(self)
-    self.Throttle = 0.0
-    self.Steering = 0.0
-    self.HandBrake = false
 end
 
 function BP_PlayerController_C:ReceiveBeginPlay()
@@ -29,12 +26,8 @@ end
 --function BP_PlayerController_C:ReceiveEndPlay()
 --end
 
-function BP_PlayerController_C:ReceiveTick(DeltaSeconds)
-    -- TODO: 这里有一些执行效率问题，待优化；同时和键盘的输入也有冲突
-    self.Pawn:MoveForward(self.Throttle)
-    self.Pawn:MoveRight(self.Steering)
-    self.Pawn:HandBrake(self.HandBrake)
-end
+--function BP_PlayerController_C:ReceiveTick(DeltaSeconds)
+--end
 
 --function BP_PlayerController_C:ReceiveAnyDamage(Damage, DamageType, InstigatedBy, DamageCauser)
 --end
@@ -48,21 +41,21 @@ end
 function BP_PlayerController_C:SetThrottle(InThrottle)
     print("BP_PlayerController_C:SetThrottle", InThrottle)
     if self.Pawn then
-        self.Throttle = InThrottle
+        self.Pawn:SetInputThrottle(InThrottle)
     end
 end
 
 function BP_PlayerController_C:SetSteering(InSteering)
     print("BP_PlayerController_C:SetSteering", InSteering)
     if self.Pawn then
-        self.Steering = InSteering
+        self.Pawn:SetInputSteering(InSteering)
     end
 end
 
 function BP_PlayerController_C:SetHandBrake(InHandBrake)
     print("BP_PlayerController_C:SetHandBrake", InHandBrake)
     if self.Pawn then
-        self.HandBrake = InHandBrake
+        self.Pawn:SetInputHandBrake(InHandBrake)
     end
 end
 
