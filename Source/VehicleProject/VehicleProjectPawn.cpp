@@ -186,10 +186,20 @@ void AVehicleProjectPawn::SetupPlayerInputComponent(class UInputComponent* Playe
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleProjectPawn::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleProjectPawn::MoveRight);
 	PlayerInputComponent->BindAxis(LookUpBinding);
 	PlayerInputComponent->BindAxis(LookRightBinding);
+
+	PlayerInputComponent->BindAction("Throttle", IE_Pressed, this, &AVehicleProjectPawn::OnThrottlePressed);
+	PlayerInputComponent->BindAction("Throttle", IE_Released, this, &AVehicleProjectPawn::OnThrottleRelease);
+
+	PlayerInputComponent->BindAction("Brake", IE_Pressed, this, &AVehicleProjectPawn::OnBrakePressed);
+	PlayerInputComponent->BindAction("Brake", IE_Released, this, &AVehicleProjectPawn::OnBrakeRelease);
+
+	PlayerInputComponent->BindAction("Left", IE_Pressed, this, &AVehicleProjectPawn::OnLeftPressed);
+	PlayerInputComponent->BindAction("Left", IE_Released, this, &AVehicleProjectPawn::OnLeftRelease);
+
+	PlayerInputComponent->BindAction("Right", IE_Pressed, this, &AVehicleProjectPawn::OnRightPressed);
+	PlayerInputComponent->BindAction("Right", IE_Released, this, &AVehicleProjectPawn::OnRightRelease);
 
 	PlayerInputComponent->BindAction("Handbrake", IE_Pressed, this, &AVehicleProjectPawn::OnHandbrakePressed);
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AVehicleProjectPawn::OnHandbrakeReleased);
@@ -198,30 +208,54 @@ void AVehicleProjectPawn::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AVehicleProjectPawn::OnResetVR); 
 }
 
-void AVehicleProjectPawn::MoveForward(float Val)
+void AVehicleProjectPawn::OnThrottlePressed()
 {
-	GetVehicleMovementComponent()->SetThrottleInput(Val);
-
+	InputControlData.SetInputThrottle(1.0f);
 }
 
-void AVehicleProjectPawn::MoveRight(float Val)
+void AVehicleProjectPawn::OnThrottleRelease()
 {
-	GetVehicleMovementComponent()->SetSteeringInput(Val);
+	InputControlData.SetInputThrottle(0.0f);
 }
 
-void AVehicleProjectPawn::HandBrake(bool InHandBrake)
+void AVehicleProjectPawn::OnBrakePressed()
 {
-	GetVehicleMovementComponent()->SetHandbrakeInput(InHandBrake);
+	InputControlData.SetInputThrottle(-1.0f);
+}
+
+void AVehicleProjectPawn::OnBrakeRelease()
+{
+	InputControlData.SetInputThrottle(0.0f);
+}
+
+void AVehicleProjectPawn::OnLeftPressed()
+{
+	InputControlData.SetInputSteering(-1.0f);
+}
+
+void AVehicleProjectPawn::OnLeftRelease()
+{
+	InputControlData.SetInputSteering(0.0f);
+}
+
+void AVehicleProjectPawn::OnRightPressed()
+{
+	InputControlData.SetInputSteering(1.0f);
+}
+
+void AVehicleProjectPawn::OnRightRelease()
+{
+	InputControlData.SetInputSteering(0.0f);
 }
 
 void AVehicleProjectPawn::OnHandbrakePressed()
 {
-	GetVehicleMovementComponent()->SetHandbrakeInput(true);
+	InputControlData.SetInputHandBrake(true);
 }
 
 void AVehicleProjectPawn::OnHandbrakeReleased()
 {
-	GetVehicleMovementComponent()->SetHandbrakeInput(false);
+	InputControlData.SetInputHandBrake(false);
 }
 
 void AVehicleProjectPawn::OnToggleCamera()
@@ -255,6 +289,9 @@ void AVehicleProjectPawn::EnableIncarView(const bool bState)
 void AVehicleProjectPawn::Tick(float Delta)
 {
 	Super::Tick(Delta);
+
+	// Update input control data
+	UpdateInputControl();
 
 	// Setup the flag to say we are in reverse gear
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
@@ -379,6 +416,28 @@ void AVehicleProjectPawn::UpdatePhysicsMaterial()
 			bIsLowFriction = true;
 		}
 	}
+}
+
+void AVehicleProjectPawn::UpdateInputControl()
+{
+	GetVehicleMovementComponent()->SetSteeringInput(InputControlData.GetInputSteering());
+	GetVehicleMovementComponent()->SetThrottleInput(InputControlData.GetInputThrottle());
+	GetVehicleMovementComponent()->SetHandbrakeInput(InputControlData.GetInputHandBrake());
+}
+
+void AVehicleProjectPawn::SetInputSteering(float InSteering)
+{
+	InputControlData.SetInputSteering(InSteering);
+}
+
+void AVehicleProjectPawn::SetInputThrottle(float InSteering)
+{
+	InputControlData.SetInputThrottle(InSteering);
+}
+
+void AVehicleProjectPawn::SetInputHandBrake(bool InHandBrake)
+{
+	InputControlData.SetInputHandBrake(InHandBrake);
 }
 
 #undef LOCTEXT_NAMESPACE

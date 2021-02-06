@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "WheeledVehicle.h"
+#include "Racing/VehicleInputControlData.h"
 #include "VehicleProjectPawn.generated.h"
 
 class UPhysicalMaterial;
@@ -90,30 +91,54 @@ protected:
 public:
 	// End Actor interface
 
-	/** Handle pressing forwards */
-	UFUNCTION()
-	void MoveForward(float Val);
-
 	/** Setup the strings used on the hud */
 	void SetupInCarHUD();
 
 	/** Update the physics material used by the vehicle mesh */
 	void UpdatePhysicsMaterial();
 
-	/** Handle pressing right */
-	UFUNCTION()
-	void MoveRight(float Val);
-	/** Handle pressing handbrake */
-	UFUNCTION()
-	void HandBrake(bool InHandBrake);
+	/** Update the input control data */
+	void UpdateInputControl();
+
+	/** Handle throttle pressed */
+	void OnThrottlePressed();
+	/** Handle throttle released */
+	void OnThrottleRelease();
+
+	/** Handle brake pressed */
+	void OnBrakePressed();
+	/** Handle brake released */
+	void OnBrakeRelease();
+
+	/** Handle left pressed */
+	void OnLeftPressed();
+	/** Handle left released */
+	void OnLeftRelease();
+
+	/** Handle right pressed */
+	void OnRightPressed();
+	/** Handle right released */
+	void OnRightRelease();
+
 	/** Handle handbrake pressed */
 	void OnHandbrakePressed();
 	/** Handle handbrake released */
 	void OnHandbrakeReleased();
+
 	/** Switch between cameras */
 	void OnToggleCamera();
 	/** Handle reset VR device */
 	void OnResetVR();
+
+	/** Handle pressing handbrake */
+	UFUNCTION()
+	void SetInputSteering(float InSteering);
+	/** Handle pressing handbrake */
+	UFUNCTION()
+	void SetInputThrottle(float InThrottle);
+	/** Handle pressing handbrake */
+	UFUNCTION()
+	void SetInputHandBrake(bool InHandBrake);
 
 	static const FName LookUpBinding;
 	static const FName LookRightBinding;
@@ -136,7 +161,8 @@ private:
 	UPhysicalMaterial* SlipperyMaterial;
 	/** Non Slippery Material instance */
 	UPhysicalMaterial* NonSlipperyMaterial;
-
+	/** Input Control Data instance */
+	Racing::VehicleInputControlData InputControlData;
 
 public:
 	/** Returns SpringArm subobject **/
